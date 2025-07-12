@@ -140,7 +140,7 @@ class Setting {
 			list,
 			use: this.use,
 		};
-		console.log('bg getList', re, this);
+		console.log('bg getList', list.length, re);
 		return re;
 	}
 }
