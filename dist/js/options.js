@@ -2,10 +2,17 @@
 	console.log('options.js loaded');
 
 	const response = await chrome.runtime.sendMessage({
-		type: 'FROM_OPTIONS',
-		data: '这是来自options页面的消息'
-	});
+		action: 'getList',
+	});;
 	console.log('response from background:', response);
+
+	config = {
+		mode: "system",
+	}
+	chrome.proxy.settings.set(
+		{ value: config, scope: 'regular' },
+		function() { }
+	);
 
 	/*
 	var config = {
