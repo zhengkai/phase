@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Phase - Popup</title>
+		<link rel="stylesheet" href="/css/popup.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>PAC Proxy</h1>
+			<div id="current-status">Loading...</div>
+			<div class="proxy-list" id="proxy-list">
+			</div>
+			<button id="disable-proxy">Disable Proxy</button>
+			<button id="options-link" onclick="chrome.runtime.openOptionsPage();">Open Options</button>
+		</div>
+		<script src="/js/popup.js"></script>
+	</body>
+</html>

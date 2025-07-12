@@ -1,0 +1,29 @@
+{
+	"manifest_version": 3,
+	"name": "Phase",
+	"version": "1.0.0",
+	"description": "Web Debugging Proxy",
+	"permissions": [
+		"proxy",
+		"storage"
+	],
+	"background": {
+		"service_worker": "js/background.js"
+	},
+	"action": {
+		"default_popup": "page/popup.html",
+		"default_icon": {
+			"16": "img/icon-16.webp",
+			"32": "img/icon-32.webp",
+			"48": "img/icon-48.webp",
+			"128": "img/icon-128.webp"
+		}
+	},
+	"options_page": "page/options.html",
+	"icons": {
+		"16": "img/icon-16.webp",
+		"32": "img/icon-32.webp",
+		"48": "img/icon-48.webp",
+		"128": "img/icon-128.webp"
+	}
+}
