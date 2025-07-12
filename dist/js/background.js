@@ -2,66 +2,104 @@
 
 const origin = new URL(chrome.runtime.getURL('')).origin;
 
-const converSetting = (name, mode, path) => {
-	console.log('converSetting', name, mode, path);
-
-	let cfg = {};
-	if (mode === 'pac') {
-		cfg = {
-			mode: 'auto_detect',
-			pacScript: {
-				url: path,
-				mandatory: true,
-			}
-		};
-	} else {
-		cfg = {
-			mode: 'fixed_servers',
-			rules: {
-				singleProxy: {
-					scheme: 'socks5',
-					host: '1.2.3.4',
-					port: 1080,
-				},
-				bypassList: [],
-			}
-		};
-	}
-	return {
-		name,
-		cfg,
-	}
-};
+const specMode = ['system', 'direct'];
 
 class Setting {
 
-	data = {
-		list: [],
-	};
+	serial = 0;
+	use = 0;
+	list = [];
 
 	constructor() {
-		chrome.storage.local.get(['proxy-list'], function(o) {
-			let li = o['proxy-list'];
-			if (Array.isArray(li)) {
-				this.data.list = li;
+		chrome.storage.local.get(['list', 'use', 'serial'], (o) => {
+			console.log('local.get', o);
+			const serial = o.serial | 0;
+			let li = o.list || [];
+			let maxSerial = 0;
+			if (li?.length) {
+				this.list = li;
+				let save = false;
+				li.forEach((o) => {
+					if (!(o.serial > 0)) {
+						o.serial = this.genSerial();
+						save = true;
+					}
+					if (maxSerial < o.serial) {
+						maxSerial = o.serial;
+					}
+					if (save) {
+						chrome.storage.local.set({ list: li });
+					}
+				});
 			}
+			if (maxSerial < serial) {
+				maxSerial = serial;
+			}
+			this.serial = maxSerial;
+			this.useProxy(o.use | 0);
+
+			console.log('init', serial, o.use, this.list);
 		});
+		chrome.proxy.settings.get(
+			{ 'incognito': false },
+			function(cfg) {
+				console.log('init proxy get', JSON.stringify(cfg));
+			}
+		);
 	}
 
-	useIndex(idx) {
-		const li = this.data.list;
-		if (idx < 0 || idx >= li.length) {
-			idx = 0;
+	useProxy(serial) {
+		let p = null;
+		for (const o of this.getList().list) {
+			if (o.serial === serial) {
+				p = o;
+				break;
+			}
 		}
-		li.forEach((item, i) => {
-			item.use = (i === idx);
-			if (item.use) {
-				// this._setProxy(item.cfg);
-			}
-		});
+		if (!p) {
+
+			console.log('useProxy ', serial, this.getList().list);
+
+			this.useProxy(-1);
+			return;
+		}
+		chrome.storage.local.set({ use: serial });
+		this.use = serial;
+		this._setProxy(p.mode, p.path);
 	}
 
-	_setProxy(cfg) {
+	_makeProxyCfg(mode, path) {
+		if (specMode.includes(mode)) {
+			return {
+				mode,
+			};
+		}
+		if (mode === 'pac') {
+			return {
+				mode: 'pac_script',
+				pacScript: {
+					url: path,
+					mandatory: false, // comment in doc : If true, an invalid PAC script will prevent the network stack from falling back to direct connections. Defaults to false.
+				},
+			}
+		}
+		const [host, port] = path.split(':');
+		return {
+			mode: 'fixed_servers',
+			rules: {
+				singleProxy: {
+					scheme: mode,
+					host,
+					port: parseInt(port, 10),
+				},
+				bypassList: ['localhost', '127.0.0.1'],
+			}
+		};
+	}
+
+	_setProxy(mode, path) {
+		const cfg = this._makeProxyCfg(mode, path);
+		console.log('_set proxy', cfg);
 		chrome.proxy.settings.set(
 			{ value: cfg, scope: 'regular' },
 			() => { },
@@ -69,26 +107,40 @@ class Setting {
 	}
 
 	setList(li) {
-		console.log('setList', li);
-		this.data.list = li;
-		chrome.storage.local.set({ 'proxy-list': li });
+		this.list = li;
+		this.useProxy(this.use);
+		console.log('save', this.use, li);
+		chrome.storage.local.set({ list: li });
 		return true;
 	}
 
+	genSerial() {
+		this.serial++;
+		console.log('save serial', this.serial);
+		chrome.storage.local.set({ serial: this.serial });
+		return this.serial;
+	}
+
 	getList() {
-		const re = (this.data.list?.length ? this.data.list : []).concat(...[
+		const list = this.list.concat(...[
 			{
 				name: 'System',
 				mode: 'system',
+				serial: -1,
 				path: '',
 			},
 			{
 				name: 'Direct',
 				mode: 'direct',
+				serial: -2,
 				path: '',
 			},
 		]);
-		console.log('getList', re);
+		const re = {
+			list,
+			use: this.use,
+		};
+		console.log('bg getList', re, this);
 		return re;
 	}
 }
@@ -108,6 +160,6 @@ chrome.runtime.onMessage.addListener((req, sender, sendRsp) => {
 	const fn = setting[action];
 	if (typeof fn === 'function') {
 		sendRsp(fn.call(setting, req?.parm));
-		return action.startsWith('get');
+		return !action.startsWith('set');
 	}
 });

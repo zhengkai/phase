@@ -16,8 +16,13 @@ const setPathPlaceHolder = (c) => {
 };
 
 const newOne = () => {
-	const c = fillOne();
-	c.querySelector('input[name=name]').focus();
+	chrome.runtime?.sendMessage({
+		action: 'genSerial',
+	}, (serial) => {
+		console.log('newOne', serial);
+		const c = fillOne({ serial });
+		c.querySelector('input[name=name]').focus();
+	});
 }
 
 const checkPath = (v, t) => {
@@ -61,6 +66,7 @@ const saveAll = () => {
 	let firstError = false;
 	for (const o of htmlLi.querySelectorAll('form')) {
 		const form = new FormData(o);
+		const serial = o.dataset.serial | 0;
 		const mode = form.get('mode') || 'http';
 		const name = (form.get('name') || '').trim();
 		const { error, path } = checkPath((form.get('path') || '').trim(), mode)
@@ -73,7 +79,7 @@ const saveAll = () => {
 			continue;
 		}
 		if (!firstError) {
-			li.push({ name, mode, path });
+			li.push({ serial, name, mode, path });
 		}
 	};
 	if (firstError) {
@@ -86,6 +92,7 @@ const saveAll = () => {
 };
 
 const fillOne = (d) => {
+
 	const c = document.createElement('div');
 	c.className = 'opt';
 	c.innerHTML = tpl;
@@ -93,6 +100,8 @@ const fillOne = (d) => {
 	if (['system', 'direct'].includes(d?.mode)) {
 		return;
 	}
+
+	c.querySelector('form').dataset.serial = d.serial;
 
 	switch (d?.mode) {
 		case 'pac':
@@ -120,12 +129,14 @@ const fillOne = (d) => {
 
 	c.querySelector('input[name=name]').value = d?.name || '';
 
+	c.querySelector('input[name=path]').value = d?.path || '';
+
 	document.getElementById('opt-list').appendChild(c);
 
 	return c;
 };
 
-const setSerial = () => {
+const setIdx = () => {
 	htmlLi.querySelectorAll('div.name > span').forEach((el, idx) => {
 		el.innerText = `${idx + 1}.`;
 	});
@@ -139,12 +150,12 @@ document.querySelectorAll('button.save').forEach((btn) => {
 
 chrome.runtime?.sendMessage({
 	action: 'getList',
-}, (li) => {
-	li.forEach(fillOne);
+}, (re) => {
+	re.list.forEach(fillOne);
 	if (!htmlLi.querySelector('form')) {
 		newOne();
 	}
-	setSerial();
+	setIdx();
 })
 
 // [1, 2, 3].forEach(() => {

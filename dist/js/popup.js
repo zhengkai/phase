@@ -6,19 +6,23 @@ const fill = (rsp) => {
 	const o = document.getElementById('list');
 	o.innerHTML = '';
 	console.log(rsp);
-	rsp.forEach((item, idx) => {
+	rsp.list.forEach((a, idx) => {
 		const row = document.createElement('div');
-		row.className = 'btn';
-		let serial = `<div>${idx + 1}.</div>`;
-		if (['system', 'direct'].includes(item.mode)) {
-			serial = '<div></div>';
+		row.classList.add('btn');
+		if (rsp.use === a.serial) {
+			row.classList.add('active');
 		}
-		row.innerHTML = `${serial}<div>${item.name}</div>`;
+		if (['system', 'direct'].includes(a.mode)) {
+			idx = '<div></div>';
+		} else {
+			idx = `<div>${idx + 1}.</div>`;
+		}
+		row.innerHTML = `${idx}<div>${a.name} ${a.serial}</div>`;
 		o.appendChild(row);
 		row.addEventListener('click', () => {
 			chrome.runtime.sendMessage({
-				action: 'useIndex',
-				parm: idx,
+				action: 'useProxy',
+				parm: a.serial,
 			});
 			window.close();
 		});
@@ -27,17 +31,4 @@ const fill = (rsp) => {
 
 chrome.runtime?.sendMessage({
 	action: 'getList',
-}, fill) || fill([
-	{
-		name: 'System',
-		cfg: {
-			mode: 'system',
-		},
-	},
-	{
-		name: 'Direct',
-		cfg: {
-			mode: 'direct',
-		},
-	},
-]);
+}, fill);

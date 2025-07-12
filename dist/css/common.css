@@ -1,6 +1,7 @@
 * {
 	box-sizing: border-box;
 	font-family: 'JetBrains Mono NL', 'Source Han Sans SC', monospace;
+	font-size: 16px;
 }
 
 label {
