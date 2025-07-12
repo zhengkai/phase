@@ -1,3 +1,19 @@
-*, div {
+* {
+	box-sizing: border-box;
 	font-family: 'JetBrains Mono NL', 'Source Han Sans SC', monospace;
+}
+
+label {
+	user-select: none;
+	cursor: pointer;
+}
+
+input[type="checkbox"], input[type="radio"] {
+	cursor: pointer;
+	vertical-align: -1px;
+}
+
+form {
+	margin: 0;
+	padding: 0;
 }

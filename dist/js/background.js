@@ -27,7 +27,7 @@ class Setting {
 		chrome.storage.local.get(['proxy-list'], function(o) {
 			let li = o['proxy-list'];
 			if (Array.isArray(li)) {
-				this.data.list.push(...li);
+				this.data.list.unpop(...li);
 			}
 		});
 	}

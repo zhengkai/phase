@@ -3,12 +3,53 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Phase - Options</title>
+		<link rel="stylesheet" href="/css/common.css">
+		<link rel="stylesheet" href="/css/layout.css">
 		<link rel="stylesheet" href="/css/options.css">
 	</head>
 	<body>
-		<div class="container">
-			<h1>Options</h1>
+		<header>
+			<div>
+				<div><h1>Phase / Options</h1>Web Debugging Proxy</div>
+			</div>
+		</header>
+		<main>
+			<div class="op">
+				<button type="button" class="new">✨ New</button>
+				<button type="button" class="save">📥 Save</button>
+			</div>
+			<div id="opt-list">
+			</div>
+			<div class="op">
+				<button type="button" class="new">✨ New</button>
+				<button type="button" class="save">📥 Save</button>
+			</div>
+		</main>
+
+		<div id="tpl">
+			<form>
+			<div class="name">
+				<span></span><input type="text" name="name" value="" placeholder="Proxy Name">
+				<button type="button" class="delete">❌ Delete</button>
+			</div>
+			<div class="main">
+				<div class="radio">
+					<label><input type="radio" name="type" value="http"> HTTP</label>
+					<label><input type="radio" name="type" value="socks5"> SOCKS5</label>
+					<label><input type="radio" name="type" value="pac"> PAC</label>
+					<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_PAC_file" target="_blank">What is PAC?</a>
+				</div>
+				<div class="path"><input type="text" name="path" value=""></div>
+			</div>
+			</form>
 		</div>
+
+		<footer>
+			<div>
+				<div>made by soulogic</div>
+				<div><a href="https://github.com/zhengkai/phase"><img src="/img/github.svg" alt="GitHub Logo">Code on GitHub</a></div>
+			</div>
+		</footer>
 		<script src="/js/options.js"></script>
 	</body>
 </html>

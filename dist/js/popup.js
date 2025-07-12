@@ -5,10 +5,14 @@ document.getElementById('options').addEventListener('click', () => {
 const fill = (rsp) => {
 	const o = document.getElementById('list');
 	o.innerHTML = '';
-	rsp.forEach((item, idx) => {
+	rsp.forEach((item) => {
 		const row = document.createElement('div');
 		row.className = 'btn';
-		row.innerHTML = `<div>${idx}.</div><div>${item.name}</div>`;
+		let serial = `<div>${idx}.</div>`;
+		if (!['system', 'direct'].includes(item.cfg?.mode)) {
+			serial = '<div></div>';
+		}
+		row.innerHTML = `${serial}<div>${item.name}</div>`;
 		o.appendChild(row);
 		row.addEventListener('click', () => {
 			chrome.runtime.sendMessage({
@@ -26,13 +30,13 @@ chrome.runtime?.sendMessage({
 	{
 		name: 'System',
 		cfg: {
-			'mode': 'system',
+			mode: 'system',
 		},
 	},
 	{
 		name: 'Direct',
 		cfg: {
-			'mode': 'direct',
+			mode: 'direct',
 		},
 	},
 ]);

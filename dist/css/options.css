@@ -1,0 +1,74 @@
+#opt-list {
+	min-height: 400px;
+}
+
+div.opt {
+	margin: 24px 0 0;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	div.name, div.main > div {
+		padding: 8px 16px;
+	}
+	div.main {
+		border-top: 1px solid #ccc;
+		> div.radio {
+			label:last-of-type {
+				margin-right: 32px;
+			}
+		}
+	}
+	div.path {
+		border-top: 1px solid #ccc;
+		input[type="text"] {
+			width: 100%;
+		}
+	}
+	div.name {
+		span {
+			display: inline-block;
+			width: 32px;
+			text-align: right;
+			margin-right: 8px;
+		}
+		input[type="text"] {
+			width: 320px;
+		}
+	}
+}
+
+input[type="text"] {
+	border: 1px solid #ccc;
+	background-color: rgba(0, 0, 0, 0.05);
+	font-size: 16px;
+	height: 48px;
+	padding: 0 16px;
+	line-height: 1;
+	&:focus {
+		background-color: rgba(0, 200, 255, 0.15);
+	}
+	&:disabled {
+		background-color: #fff;
+		color: #000;
+		border-color: #fff;
+	}
+}
+
+main > div.op {
+	margin: 32px 0;
+}
+
+button {
+	background-color: #def;
+	border-radius: 8px;
+	border: 1px solid #ccc;
+	font-size: 16px;
+	padding: 8px 16px;
+	cursor: pointer;
+	&:hover {
+		background-color: #cdf;
+	}
+}
+
+#tpl {
+	display: none;
+}
