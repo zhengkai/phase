@@ -12,8 +12,22 @@ div.opt {
 	div.main {
 		border-top: 1px solid #ccc;
 		> div.radio {
+			display: flex;
+			a {
+				user-select: none;
+			}
+			* {
+				display: inline-block;
+				font-size: 16px;
+			}
 			label:last-of-type {
 				margin-right: 32px;
+			}
+			div.alert {
+				flex: 1;
+				text-align: right;
+				color: red;
+				font-weight: bold;
 			}
 		}
 	}

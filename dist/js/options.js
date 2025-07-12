@@ -6,15 +6,83 @@ const htmlLi = document.getElementById('opt-list');
 
 const setPathPlaceHolder = (c) => {
 	const form = new FormData(c.querySelector('form'));
-	console.log('form', form.get('type'));
-
-	if (form.get('type') === 'pac') {
+	if (form.get('mode') === 'pac') {
 		c.querySelector('input[name=path]').placeholder = 'http://localhost/pac.js';
-	} else if (form.get('type') === 'socks5') {
+	} else if (form.get('mode') === 'socks5') {
 		c.querySelector('input[name=path]').placeholder = '127.0.0.1:1080';
 	} else {
 		c.querySelector('input[name=path]').placeholder = '127.0.0.1:8118';
 	}
+};
+
+const newOne = () => {
+	const c = fillOne();
+	c.querySelector('input[name=name]').focus();
+}
+
+const checkPath = (v, t) => {
+
+	if (!v?.length) {
+		return { error: 'empty path', path: '' };
+	}
+
+	if (t === 'pac') {
+		if (!v.startsWith('http://') && !v.startsWith('https://')) {
+			return { error: 'PAC URL must start with http://', path: v };
+		};
+		let u = null;
+		try {
+			u = new URL(v);
+		} catch (e) {
+		}
+		if (!u) {
+			return { error: 'Invalid URL', path: v };
+		}
+		return { error: '', path: v };
+	}
+
+	v = v.replace(/\/+$/, '').toLowerCase();
+	const lastSlash = v.lastIndexOf('/');
+	if (lastSlash > -1) {
+		v = v.substring(lastSlash + 1);
+	}
+	if (!/^[0-9a-z\.\-]+:[\d]{1,5}$/.test(v)) {
+		console.log(v);
+		return { error: 'Invalid path, must be in the format of "host:port"', path: v };
+	}
+	return { error: '', path: v };
+};
+
+const saveAll = () => {
+	htmlLi.querySelectorAll('div.alert').forEach((el) => {
+		el.innerHTML = '';
+	});
+	const li = [];
+	let firstError = false;
+	for (const o of htmlLi.querySelectorAll('form')) {
+		const form = new FormData(o);
+		const mode = form.get('mode') || 'http';
+		const name = (form.get('name') || '').trim();
+		const { error, path } = checkPath((form.get('path') || '').trim(), mode)
+		if (error) {
+			o.querySelector('div.alert').innerHTML = error;
+			if (!firstError) {
+				o.querySelector('input[name=path]').focus();
+				firstError = true;
+			}
+			continue;
+		}
+		if (!firstError) {
+			li.push({ name, mode, path });
+		}
+	};
+	if (firstError) {
+		return;
+	}
+	chrome.runtime.sendMessage({
+		action: 'setList',
+		parm: li,
+	})
 };
 
 const fillOne = (d) => {
@@ -22,21 +90,24 @@ const fillOne = (d) => {
 	c.className = 'opt';
 	c.innerHTML = tpl;
 
-	const cfg = d?.cfg || {};
+	if (['system', 'direct'].includes(d?.mode)) {
+		return;
+	}
 
-	if (cfg.mode === 'auto_detect') {
-		c.querySelector('input[name=type][value=pac]').checked = true;
-	} else {
-		const scheme = cfg.rules?.singleProxy?.scheme
-		if (scheme === 'socks5') {
-			c.querySelector('input[name=type][value=socks5]').checked = true;
-		} else {
-			c.querySelector('input[name=type][value=http]').checked = true;
-		}
+	switch (d?.mode) {
+		case 'pac':
+			c.querySelector('input[name=mode][value=pac]').checked = true;
+			break;
+		case 'socks5':
+			c.querySelector('input[name=mode][value=socks5]').checked = true;
+			break;
+		default:
+			c.querySelector('input[name=mode][value=http]').checked = true;
+			break;
 	}
 
 	setPathPlaceHolder(c);
-	c.querySelectorAll('input[name=type]').forEach((el) => {
+	c.querySelectorAll('input[name=mode]').forEach((el) => {
 		el.addEventListener('click', () => {
 			setPathPlaceHolder(c);
 		});
@@ -60,15 +131,19 @@ const setSerial = () => {
 	});
 };
 
-document.querySelector('button.new').addEventListener('click', () => {
-	const c = fillOne();
-	c.querySelector('input[name=name]').focus();
+document.querySelector('button.new').addEventListener('click', newOne)
+
+document.querySelectorAll('button.save').forEach((btn) => {
+	btn.addEventListener('click', saveAll);
 });
 
 chrome.runtime?.sendMessage({
 	action: 'getList',
 }, (li) => {
 	li.forEach(fillOne);
+	if (!htmlLi.querySelector('form')) {
+		newOne();
+	}
 	setSerial();
 })
 

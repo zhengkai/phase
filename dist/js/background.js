@@ -2,32 +2,48 @@
 
 const origin = new URL(chrome.runtime.getURL('')).origin;
 
+const converSetting = (name, mode, path) => {
+	console.log('converSetting', name, mode, path);
+
+	let cfg = {};
+	if (mode === 'pac') {
+		cfg = {
+			mode: 'auto_detect',
+			pacScript: {
+				url: path,
+				mandatory: true,
+			}
+		};
+	} else {
+		cfg = {
+			mode: 'fixed_servers',
+			rules: {
+				singleProxy: {
+					scheme: 'socks5',
+					host: '1.2.3.4',
+					port: 1080,
+				},
+				bypassList: [],
+			}
+		};
+	}
+	return {
+		name,
+		cfg,
+	}
+};
+
 class Setting {
 
 	data = {
-		list: [
-			{
-				name: 'System',
-				use: true,
-				cfg: {
-					'mode': 'system',
-				},
-			},
-			{
-				name: 'Direct',
-				use: false,
-				cfg: {
-					'mode': 'direct',
-				},
-			},
-		],
+		list: [],
 	};
 
 	constructor() {
 		chrome.storage.local.get(['proxy-list'], function(o) {
 			let li = o['proxy-list'];
 			if (Array.isArray(li)) {
-				this.data.list.unpop(...li);
+				this.data.list = li;
 			}
 		});
 	}
@@ -40,7 +56,7 @@ class Setting {
 		li.forEach((item, i) => {
 			item.use = (i === idx);
 			if (item.use) {
-				this._setProxy(item.cfg);
+				// this._setProxy(item.cfg);
 			}
 		});
 	}
@@ -52,8 +68,28 @@ class Setting {
 		);
 	}
 
+	setList(li) {
+		console.log('setList', li);
+		this.data.list = li;
+		chrome.storage.local.set({ 'proxy-list': li });
+		return true;
+	}
+
 	getList() {
-		return this.data.list;
+		const re = (this.data.list?.length ? this.data.list : []).concat(...[
+			{
+				name: 'System',
+				mode: 'system',
+				path: '',
+			},
+			{
+				name: 'Direct',
+				mode: 'direct',
+				path: '',
+			},
+		]);
+		console.log('getList', re);
+		return re;
 	}
 }
 
