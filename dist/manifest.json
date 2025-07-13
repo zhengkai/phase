@@ -12,9 +12,9 @@
 		"type": "module"
 	},
 	"action": {
-		"default_popup": "page/popup.html"
+		"default_popup": "html/popup.html"
 	},
-	"options_page": "page/options.html",
+	"options_page": "html/options.html",
 	"icons": {
 		"16": "img/icon-16.webp",
 		"32": "img/icon-32.webp",
