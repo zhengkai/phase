@@ -1,7 +1,5 @@
 'use strict';
 
-const origin = new URL(chrome.runtime.getURL('')).origin;
-
 const setIcon = (id) => {
 	chrome.action.setIcon({
 		path: {
