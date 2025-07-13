@@ -53,7 +53,7 @@ const checkPath = (v, t) => {
 	}
 	if (!/^[0-9a-z\.\-]+:[\d]{1,5}$/.test(v)) {
 		console.log(v);
-		return { error: 'Invalid path, must be in the format of "host:port"', path: v };
+		return { error: 'Invalid path, must be "host:port"', path: v };
 	}
 	return { error: '', path: v };
 };
@@ -142,22 +142,35 @@ const setIdx = () => {
 	});
 };
 
-document.querySelector('button.new').addEventListener('click', newOne)
+(async () => {
 
-document.querySelectorAll('button.save').forEach((btn) => {
-	btn.addEventListener('click', saveAll);
-});
-
-chrome.runtime?.sendMessage({
-	action: 'getList',
-}, (re) => {
-	re.list.forEach(fillOne);
-	if (!htmlLi.querySelector('form')) {
-		newOne();
+	while (true) {
+		const re = await chrome.runtime?.sendMessage({
+			action: 'getInit',
+		});
+		if (re) {
+			break;
+		}
+		await new Promise((resolve) => setTimeout(resolve, 100));
 	}
-	setIdx();
-})
 
-// [1, 2, 3].forEach(() => {
-// fillOne();
-// });
+	document.querySelectorAll('button.new').forEach((btn) => {
+		btn.style.display = 'inline-block';
+		btn.addEventListener('click', newOne)
+	});
+
+	document.querySelectorAll('button.save').forEach((btn) => {
+		btn.style.display = 'inline-block';
+		btn.addEventListener('click', saveAll);
+	});
+
+	chrome.runtime?.sendMessage({
+		action: 'getList',
+	}, (re) => {
+		re.list.forEach(fillOne);
+		if (!htmlLi.querySelector('form')) {
+			newOne();
+		}
+		setIdx();
+	})
+})()

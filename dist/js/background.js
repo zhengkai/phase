@@ -6,6 +6,8 @@ const specMode = ['system', 'direct'];
 
 class Setting {
 
+	init = false;
+
 	serial = 0;
 	use = 0;
 	list = [];
@@ -37,6 +39,8 @@ class Setting {
 			}
 			this.serial = maxSerial;
 			this.useProxy(o.use | 0);
+
+			this.init = true;
 
 			console.log('init', serial, o.use, this.list);
 		});
@@ -112,6 +116,10 @@ class Setting {
 		console.log('save', this.use, li);
 		chrome.storage.local.set({ list: li });
 		return true;
+	}
+
+	getInit() {
+		return this.init;
 	}
 
 	genSerial() {

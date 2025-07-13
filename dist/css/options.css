@@ -83,6 +83,10 @@ main > div.op {
 	margin: 32px 0;
 }
 
+button.new, button.save {
+	display: none;
+}
+
 button {
 	background-color: #def;
 	border-radius: 8px;
@@ -92,6 +96,34 @@ button {
 	&:hover {
 		background-color: #cdf;
 	}
+	img {
+		width: 24px;
+		height: 24px;
+		margin-right: 8px;
+		vertical-align: middle;
+	}
+}
+
+button.delete {
+	background-color: transparent;
+	border-width: 0;
+	margin-right: -16px;
+	margin-top: -8px;
+	width: 48px;
+	height: 48px;
+	padding: 0 0 0 8px;
+	float: right;
+	img {
+		height: 32px;
+		width: 32px;
+	}
+	&:hover img {
+		filter: invert(37%) sepia(97%) saturate(7493%) hue-rotate(355deg) brightness(98%) contrast(119%);
+	}
+}
+
+div.opt:has(button.delete:hover) {
+	background-color: rgba(255, 0, 0, 0.1);
 }
 
 #tpl {

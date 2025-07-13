@@ -29,6 +29,18 @@ const fill = (rsp) => {
 	});
 };
 
-chrome.runtime?.sendMessage({
-	action: 'getList',
-}, fill);
+(async () => {
+
+	while (true) {
+		const re = await chrome.runtime?.sendMessage({
+			action: 'getInit',
+		});
+		if (re) {
+			break;
+		}
+		await new Promise((resolve) => setTimeout(resolve, 100));
+	}
+	chrome.runtime?.sendMessage({
+		action: 'getList',
+	}, fill);
+})()
