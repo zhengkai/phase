@@ -22,7 +22,6 @@ class Setting {
 
 	constructor() {
 		chrome.storage.local.get(['list', 'use', 'serial'], (o) => {
-			console.log('local.get', o);
 			const serial = o.serial | 0;
 			let li = o.list || [];
 			let maxSerial = 0;
@@ -50,14 +49,10 @@ class Setting {
 			this.useProxy(o.use | 0);
 
 			this.init = true;
-
-			console.log('init', serial, o.use, this.list);
 		});
 		chrome.proxy.settings.get(
 			{ 'incognito': false },
-			function(cfg) {
-				console.log('init proxy get', JSON.stringify(cfg));
-			}
+			function() { }
 		);
 	}
 

@@ -5,7 +5,6 @@ document.getElementById('options').addEventListener('click', () => {
 const fill = (rsp) => {
 	const o = document.getElementById('list');
 	o.innerHTML = '';
-	console.log(rsp);
 	rsp.list.forEach((a, idx) => {
 		const row = document.createElement('div');
 		row.classList.add('btn');
@@ -17,7 +16,7 @@ const fill = (rsp) => {
 		} else {
 			idx = `<div>${idx + 1}.</div>`;
 		}
-		row.innerHTML = `${idx}<div>${a.name} ${a.serial}</div>`;
+		row.innerHTML = `${idx}<div>${a.name}</div>`;
 		o.appendChild(row);
 		row.addEventListener('click', () => {
 			chrome.runtime.sendMessage({

@@ -12,7 +12,6 @@ const notif = () => {
 	const cn = notifSerial;
 	const o = $('notif')
 	o.style.display = 'block';
-	console.log('notif', cn, o);
 	setTimeout(() => {
 		if (cn !== notifSerial) {
 			return;
@@ -36,7 +35,6 @@ const newOne = () => {
 	chrome.runtime?.sendMessage({
 		action: 'genSerial',
 	}, (serial) => {
-		console.log('newOne', serial);
 		const c = fillOne({ serial });
 		c.querySelector('input[name=name]').focus();
 	});
@@ -69,7 +67,6 @@ const checkPath = (v, t) => {
 		v = v.substring(lastSlash + 1);
 	}
 	if (!/^[0-9a-z\.\-]+:[\d]{1,5}$/.test(v)) {
-		console.log(v);
 		return { error: 'Invalid path, must be "host:port"', path: v };
 	}
 	return { error: '', path: v };
@@ -173,7 +170,6 @@ const fillOne = (d) => {
 	});
 
 	c.querySelector('button.delete').addEventListener('click', () => {
-		console.log('delete', c);
 		c.remove();
 	});
 
