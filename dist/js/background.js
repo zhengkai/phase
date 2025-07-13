@@ -2,6 +2,14 @@
 
 const origin = new URL(chrome.runtime.getURL('')).origin;
 
+const setIcon = (id) => {
+	chrome.action.setIcon({
+		path: {
+			'32': `/img/icon/s${id % 8}.png`,
+		}
+	});
+};
+
 const specMode = ['system', 'direct'];
 
 class Setting {
@@ -22,6 +30,7 @@ class Setting {
 				this.list = li;
 				let save = false;
 				li.forEach((o) => {
+					o.icon = (o.icon | 0) % 8;
 					if (!(o.serial > 0)) {
 						o.serial = this.genSerial();
 						save = true;
@@ -61,14 +70,12 @@ class Setting {
 			}
 		}
 		if (!p) {
-
-			console.log('useProxy ', serial, this.getList().list);
-
 			this.useProxy(-1);
 			return;
 		}
 		chrome.storage.local.set({ use: serial });
 		this.use = serial;
+		setIcon(p.icon | 0);
 		this._setProxy(p.mode, p.path);
 	}
 
@@ -103,7 +110,6 @@ class Setting {
 
 	_setProxy(mode, path) {
 		const cfg = this._makeProxyCfg(mode, path);
-		console.log('_set proxy', cfg);
 		chrome.proxy.settings.set(
 			{ value: cfg, scope: 'regular' },
 			() => { },
@@ -113,7 +119,6 @@ class Setting {
 	setList(li) {
 		this.list = li;
 		this.useProxy(this.use);
-		console.log('save', this.use, li);
 		chrome.storage.local.set({ list: li });
 		return true;
 	}
@@ -124,7 +129,6 @@ class Setting {
 
 	genSerial() {
 		this.serial++;
-		console.log('save serial', this.serial);
 		chrome.storage.local.set({ serial: this.serial });
 		return this.serial;
 	}
@@ -136,19 +140,20 @@ class Setting {
 				mode: 'system',
 				serial: -1,
 				path: '',
+				icon: -1,
 			},
 			{
 				name: 'Direct',
 				mode: 'direct',
 				serial: -2,
 				path: '',
+				icon: -2,
 			},
 		]);
 		const re = {
 			list,
 			use: this.use,
 		};
-		console.log('bg getList', list.length, re);
 		return re;
 	}
 }

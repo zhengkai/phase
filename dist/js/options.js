@@ -1,8 +1,10 @@
 'use strict';
 
-const tpl = document.getElementById('tpl').innerHTML;
+const $ = (s) => document.getElementById(s);
 
-const htmlLi = document.getElementById('opt-list');
+const tpl = $('tpl').innerHTML;
+
+const htmlLi = $('opt-list');
 
 const setPathPlaceHolder = (c) => {
 	const form = new FormData(c.querySelector('form'));
@@ -67,6 +69,7 @@ const saveAll = () => {
 	for (const o of htmlLi.querySelectorAll('form')) {
 		const form = new FormData(o);
 		const serial = o.dataset.serial | 0;
+		const icon = o.dataset.icon | 0;
 		const mode = form.get('mode') || 'http';
 		const name = (form.get('name') || '').trim();
 		const { error, path } = checkPath((form.get('path') || '').trim(), mode)
@@ -79,7 +82,7 @@ const saveAll = () => {
 			continue;
 		}
 		if (!firstError) {
-			li.push({ serial, name, mode, path });
+			li.push({ serial, name, mode, path, icon });
 		}
 	};
 	if (firstError) {
@@ -91,6 +94,33 @@ const saveAll = () => {
 	})
 };
 
+const fillIcon = (da, f) => {
+	const ic = f.querySelector('div.icon');
+	const dl = [];
+	Array.from({ length: 8 }).forEach((_, i) => {
+		const d = document.createElement('div');
+		d.innerHTML = `<img src="/img/icon/s${i}.svg">`;
+		dl.push(d);
+		ic.appendChild(d);
+	});
+
+	let is = da?.icon | 0;
+	if (is < 0 || is >= dl.length) {
+		is = 0;
+	}
+	dl[is].classList.add('active');
+	f.dataset.icon = is;
+
+	dl.forEach((d, i) => {
+		d.addEventListener('click', () => {
+			dl.forEach((el, si) => {
+				el.classList[(si === i ? 'add' : 'remove')]('active');
+			});
+			f.dataset.icon = i;
+		});
+	});
+}
+
 const fillOne = (d) => {
 
 	const c = document.createElement('div');
@@ -101,7 +131,10 @@ const fillOne = (d) => {
 		return;
 	}
 
-	c.querySelector('form').dataset.serial = d.serial;
+	const f = c.querySelector('form');
+	f.dataset.serial = d.serial;
+
+	fillIcon(d, f);
 
 	switch (d?.mode) {
 		case 'pac':
@@ -116,7 +149,7 @@ const fillOne = (d) => {
 	}
 
 	setPathPlaceHolder(c);
-	c.querySelectorAll('input[name=mode]').forEach((el) => {
+	f.querySelectorAll('input[name=mode]').forEach((el) => {
 		el.addEventListener('click', () => {
 			setPathPlaceHolder(c);
 		});
@@ -127,11 +160,11 @@ const fillOne = (d) => {
 		c.remove();
 	});
 
-	c.querySelector('input[name=name]').value = d?.name || '';
+	f.querySelector('input[name=name]').value = d?.name || '';
 
-	c.querySelector('input[name=path]').value = d?.path || '';
+	f.querySelector('input[name=path]').value = d?.path || '';
 
-	document.getElementById('opt-list').appendChild(c);
+	$('opt-list').appendChild(c);
 
 	return c;
 };
@@ -172,5 +205,6 @@ const setIdx = () => {
 			newOne();
 		}
 		setIdx();
+		$('loading').remove();
 	})
 })()

@@ -51,14 +51,50 @@ div.opt {
 		}
 	}
 	div.name {
+		padding: 0;
+		display: flex;
 		span {
 			display: inline-block;
-			width: 32px;
+			padding-top: 21px;
+			width: 44px;
 			text-align: right;
 			margin-right: 8px;
 		}
 		input[type="text"] {
+			margin: 8px 0;
 			width: 320px;
+		}
+		div.icon {
+			margin-left: 48px;
+			display: flex;
+			div {
+				cursor: pointer;
+				img {
+					display: block;
+					width: 32px;
+					height: 32px;
+					margin: 16px 8px 0;
+					opacity: 0.5;
+				}
+				&:hover img, &.active img {
+					opacity: 1;
+				}
+			}
+		}
+		button.delete {
+			margin-left: auto;
+			background-color: transparent;
+			border-width: 0;
+			width: 48px;
+			height: 48px;
+			padding: 0 0 0 8px;
+			img {
+				height: 32px;
+				width: 32px;
+			}
+			&:hover img {
+				filter: invert(37%) sepia(97%) saturate(7493%) hue-rotate(355deg) brightness(98%) contrast(119%);
+			}
 		}
 	}
 }
@@ -101,24 +137,6 @@ button {
 		height: 24px;
 		margin-right: 8px;
 		vertical-align: middle;
-	}
-}
-
-button.delete {
-	background-color: transparent;
-	border-width: 0;
-	margin-right: -16px;
-	margin-top: -8px;
-	width: 48px;
-	height: 48px;
-	padding: 0 0 0 8px;
-	float: right;
-	img {
-		height: 32px;
-		width: 32px;
-	}
-	&:hover img {
-		filter: invert(37%) sepia(97%) saturate(7493%) hue-rotate(355deg) brightness(98%) contrast(119%);
 	}
 }
 

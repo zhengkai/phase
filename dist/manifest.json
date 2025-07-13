@@ -8,16 +8,11 @@
 		"storage"
 	],
 	"background": {
-		"service_worker": "js/background.js"
+		"service_worker": "js/background.js",
+		"type": "module"
 	},
 	"action": {
-		"default_popup": "page/popup.html",
-		"default_icon": {
-			"16": "img/icon-16.webp",
-			"32": "img/icon-32.webp",
-			"48": "img/icon-48.webp",
-			"128": "img/icon-128.webp"
-		}
+		"default_popup": "page/popup.html"
 	},
 	"options_page": "page/options.html",
 	"icons": {
