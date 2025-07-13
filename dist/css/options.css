@@ -147,3 +147,18 @@ div.opt:has(button.delete:hover) {
 #tpl {
 	display: none;
 }
+
+#notif {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background-color: rgba(100, 200, 255, 0.9);
+	color: #000;
+	padding: 16px;
+	text-align: center;
+	font-weight: bold;
+	border-bottom: 1px solid #ccc;
+}

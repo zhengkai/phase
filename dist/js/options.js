@@ -6,6 +6,21 @@ const tpl = $('tpl').innerHTML;
 
 const htmlLi = $('opt-list');
 
+let notifSerial = 0;
+const notif = () => {
+	notifSerial++;
+	const cn = notifSerial;
+	const o = $('notif')
+	o.style.display = 'block';
+	console.log('notif', cn, o);
+	setTimeout(() => {
+		if (cn !== notifSerial) {
+			return;
+		}
+		o.style.display = 'none';
+	}, 3000);
+}
+
 const setPathPlaceHolder = (c) => {
 	const form = new FormData(c.querySelector('form'));
 	if (form.get('mode') === 'pac') {
@@ -88,6 +103,8 @@ const saveAll = () => {
 	if (firstError) {
 		return;
 	}
+
+	notif();
 	chrome.runtime.sendMessage({
 		action: 'setList',
 		parm: li,
