@@ -1,6 +1,6 @@
 # Phase - Network Debugging Tool for Chrome
 
-[Download this extensions from Ghrome Web Store](https://chromewebstore.google.com/detail/phase/nonbcligcmmbnifhoeaapfbfbepnjmle)
+[Available on the Chrome Web Store](https://chromewebstore.google.com/detail/phase/nonbcligcmmbnifhoeaapfbfbepnjmle)
 
 Proxy management tool for web development and debugging purposes only. Do not use for any other purpose.
 

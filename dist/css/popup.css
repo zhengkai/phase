@@ -31,6 +31,11 @@ div#list {
 		div {
 			word-break: break-all;
 			white-space: nowrap;
+			img {
+				margin-top: -4px;
+				margin-right: 8px;
+				vertical-align: middle;
+			}
 		}
 		div:first-child {
 			display: flex;

@@ -16,7 +16,7 @@ const fill = (rsp) => {
 		} else {
 			idx = `<div>${idx + 1}.</div>`;
 		}
-		row.innerHTML = `${idx}<div>${a.name}</div>`;
+		row.innerHTML = `${idx}<div><img src="/img/icon/s${a.icon}.svg">${a.name}</div>`;
 		o.appendChild(row);
 		row.addEventListener('click', () => {
 			chrome.runtime.sendMessage({
