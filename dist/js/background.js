@@ -165,7 +165,15 @@ chrome.runtime.onMessage.addListener((req, sender, sendRsp) => {
 
 	const fn = setting[action];
 	if (typeof fn === 'function') {
-		sendRsp(fn.call(setting, req?.parm));
-		return !action.startsWith('set');
+		const re = fn.call(setting, req?.parm);
+		if (action.startsWith('set')) {
+			return;
+		}
+		sendRsp(re);
+		return true;
 	}
 });
+
+chrome.runtime.onStartup.addListener(() => {
+	setting?.getInit();
+})
